@@ -1,5 +1,11 @@
 from tkinter import *
 from time import gmtime, strftime
+from tkinter import filedialog
+from PIL import *
+import os
+
+# from PIL import ImageTk, Image
+
 
 
 class GUI():
@@ -9,6 +15,7 @@ class GUI():
 		self.window.title('Asynchronous Chat')
 		self.canva = Canvas(self.window, width=width, height=height)
 		self.canva.grid(columnspan=3)
+		self.label_file_explorer = None
 		self.createWidgets()
 
 
@@ -27,7 +34,14 @@ class GUI():
 		self.send_button.grid(column=2, row=1)
 		self.archive_button.grid(column=3, row=1)
 		self.clean_button.grid(column=4, row=1)
-	
+
+		self.label_file_explorer = Label(self.canva,   text = "File Explorer using Tkinter", width = 100, height = 4,    fg = "blue") 
+		button_explore = Button(self.canva, text = "Browse Files", command = self.browseFiles)  
+		button_exit = Button(self.canva, text = "Exit", command = exit)  
+		self.label_file_explorer.grid() 
+		button_explore.grid() 
+		button_exit.grid() 
+			
 
 	def send(self, event=None):
 		texto = '[' + strftime("%H:%M", gmtime()) + ']:' + " " + self.txt_field.get() + '\n'
@@ -37,6 +51,23 @@ class GUI():
 
 	def clear(self, event=None):
 		self.txt_area.delete("1.0","end")
+	
+	def browseFiles(self): 
+		filename = filedialog.askopenfilename(initialdir = "/", 
+											title = "Select a File", 
+											filetypes = (("Text files", 
+															"*.txt*"), 
+														("all files", 
+															"*.*"))) 
+		
+		# self.uploadFile(filename) 
+
+	# def uploadFile(self, filename):
+		# img = ImageTk.PhotoImage(Image.open(filename))
+		# photo = PhotoImage(file = r'/home/humberto/Humberto_dados/WhatsApp Image 2021-10-29 at 12.59.12.jpeg')
+		# self.canva.create_image(20, 20, anchor = NW, image = photo)
+		# self.txt_area.insert(END, photo)
+
 
 
 	def start(self):
