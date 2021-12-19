@@ -24,8 +24,8 @@ class GUI():
 
         self.txt_field = Entry(self.window, bg='white')
         self.send_button = Button(self.window, text='Enviar',  command=self.send)
-        self.file_button = Button(self.window, text='Arquivo', command=None)
-        self.clear_button = Button(self.window, text='Limpar', command=None)
+        self.file_button = Button(self.window, text='Arquivo', command=self.browseFiles)
+        self.clear_button = Button(self.window, text='Limpar', command=self.clear)
 
         self.window.bind('<Return>', self.send)
 
@@ -53,7 +53,8 @@ class GUI():
 
 
     def clear(self, event=None):
-        self.txt_area.delete("1.0","end")
+        for child in self.txt_area.winfo_children():
+            child.destroy()
 
     def browseFiles(self):
         filename = filedialog.askopenfilename(initialdir = "/",
