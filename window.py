@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 
 class GUI():
 
+    BACKGROUND_COLOR = '#c8a2c8'
+
     def __init__(self):
         self.window = Tk()
         self.window.title('Asynchronous Chat')
@@ -17,10 +19,11 @@ class GUI():
         self.createWidgets()
 
     def createWidgets(self):
-        self.txt_area = Frame(self.window, border=1, bg='#c8a2c8', width=700, height=300)
+        self.txt_area = Frame(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
+        self.txt_area.pack_propagate(False)
 
         self.txt_field = Entry(self.window, bg='white')
-        self.send_button = Button(self.window, text='Enviar',  command=None)
+        self.send_button = Button(self.window, text='Enviar',  command=self.send)
         self.file_button = Button(self.window, text='Arquivo', command=None)
         self.clear_button = Button(self.window, text='Limpar', command=None)
 
@@ -45,7 +48,7 @@ class GUI():
 
     def send(self, event=None):
         texto = '[' + strftime("%H:%M", gmtime()) + ']:' + " " + self.txt_field.get() + '\n'
-        self.txt_area.insert(END, texto)
+        Label(self.txt_area, text=texto, bg=self.BACKGROUND_COLOR, justify=LEFT, anchor='w').pack(fill=X)
         self.txt_field.delete(0, END)
 
 
