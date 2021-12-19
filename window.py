@@ -10,37 +10,37 @@ from PIL import Image, ImageTk
 
 class GUI():
 
-    def __init__(self, width, height):
+    def __init__(self):
         self.window = Tk()
         self.window.title('Asynchronous Chat')
-        self.canva = Canvas(self.window, width=width, height=height)
-        self.canva.grid(columnspan=3)
         self.label_file_explorer = None
         self.createWidgets()
 
-
     def createWidgets(self):
-        self.txt_area = Text(self.canva, border=1)
-        self.txt_field = Entry(self.canva, width=85, border=1, bg='white')
-        self.send_button = Button(self.canva, text='Send', padx=40, command=self.send)
-        self.archive_button = Button(self.canva, text='Archive', padx=40, command=None)
-        self.clean_button = Button(self.canva, text='Clean', padx=40, command=self.clear)
+        self.txt_area = Frame(self.window, border=1, bg='#c8a2c8', width=700, height=300)
+
+        self.txt_field = Entry(self.window, bg='white')
+        self.send_button = Button(self.window, text='Enviar',  command=None)
+        self.file_button = Button(self.window, text='Arquivo', command=None)
+        self.clear_button = Button(self.window, text='Limpar', command=None)
 
         self.window.bind('<Return>', self.send)
-        self.txt_area.config(background='#c8a2c8')
 
-        self.txt_area.grid(column=0, row=0, columnspan=3)
-        self.txt_field.grid(column=0, row=1, columnspan=2)
-        self.send_button.grid(column=2, row=1)
-        self.archive_button.grid(column=3, row=1)
-        self.clean_button.grid(column=4, row=1)
+        self.txt_area.grid(row=0, column=0, columnspan=5)
+        self.txt_field.grid(row=1, column=0, columnspan=2, stick='ew', padx=(5, 0))
+        self.send_button.grid( row=1, column=2, padx=0, pady=7)
+        self.file_button.grid( row=1, column=3, padx=0)
+        self.clear_button.grid(row=1, column=4, padx=0)
 
-        self.label_file_explorer = Label(self.canva,   text = "File Explorer using Tkinter", width = 100, height = 4,    fg = "blue")
-        button_explore = Button(self.canva, text = "Browse Files", command = self.browseFiles)
-        button_exit = Button(self.canva, text = "Exit", command = exit)
-        self.label_file_explorer.grid()
-        button_explore.grid()
-        button_exit.grid()
+        self.window.columnconfigure(0, weight=4)
+        self.window.columnconfigure(1, weight=1)
+
+        #self.label_file_explorer = Label(self.canva,   text = "File Explorer using Tkinter", width = 100, height = 4,    fg = "blue")
+        #button_explore = Button(self.canva, text = "Browse Files", command = self.browseFiles)
+        #button_exit = Button(self.canva, text = "Exit", command = exit)
+        #self.label_file_explorer.grid()
+        #button_explore.grid()
+        #button_exit.grid()
 
 
     def send(self, event=None):
@@ -61,9 +61,9 @@ class GUI():
 
     def uploadFile(self, filename):
         img = Image.open(filename)
-        photo = ImageTk.PhotoImage(img)
-        self.canva.create_image(20, 20, anchor = NW, image = photo)
-        self.txt_area.insert(END, photo)
+        self.photo = ImageTk.PhotoImage(img)
+        self.canva.create_image(20, 20, anchor = NW, image = self.photo)
+        self.txt_area.insert(END, self.photo)
 
 
 
@@ -71,4 +71,4 @@ class GUI():
         self.window.mainloop()
 
 
-interface = GUI(600, 800).start()
+interface = GUI().start()
