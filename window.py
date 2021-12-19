@@ -3,9 +3,7 @@ from time import gmtime, strftime
 from tkinter import filedialog
 from PIL import *
 import os
-
-from PIL import Image, ImageTk
-
+from message_screen import MessageScreen
 
 
 class GUI():
@@ -19,8 +17,7 @@ class GUI():
         self.createWidgets()
 
     def createWidgets(self):
-        self.txt_area = Frame(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
-        self.txt_area.pack_propagate(False)
+        self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
 
         self.txt_field = Entry(self.window, bg='white')
         self.send_button = Button(self.window, text='Enviar',  command=self.send)
@@ -40,14 +37,13 @@ class GUI():
 
 
     def send(self, event=None):
-        texto = '[' + strftime("%H:%M", gmtime()) + ']:' + " " + self.txt_field.get() + '\n'
-        Label(self.txt_area, text=texto, bg=self.BACKGROUND_COLOR, justify=LEFT, anchor='w').pack(fill=X)
+        texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
+        self.txt_area.display_text(texto)
         self.txt_field.delete(0, END)
 
 
     def clear(self, event=None):
-        for child in self.txt_area.winfo_children():
-            child.destroy()
+        self.txt_area.clear()
 
     def browseFiles(self):
         filename = filedialog.askopenfilename(initialdir = "/",
@@ -57,21 +53,8 @@ class GUI():
         self.uploadFile(filename)
 
     def uploadFile(self, filename):
-        img = Image.open(filename)
-        img = img.resize((100, 100))
-        self.photo = ImageTk.PhotoImage(img)
-        Label(self.txt_area,
-              text='[' + strftime('%H:%M', gmtime()) + ']:',
-              bg=self.BACKGROUND_COLOR,
-              justify=LEFT,
-              anchor='w'
-        ).pack(fill=X)
-        Label(self.txt_area,
-              image=self.photo,
-              bg=self.BACKGROUND_COLOR,
-              justify=LEFT,
-              anchor='w'
-          ).pack(fill=X)
+        self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
+        self.txt_area.display_image(filename)
 
     def start(self):
         self.window.mainloop()
