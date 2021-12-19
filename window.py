@@ -4,7 +4,7 @@ from tkinter import filedialog
 from PIL import *
 import os
 
-# from PIL import ImageTk, Image
+from PIL import Image, ImageTk
 
 
 
@@ -57,13 +57,13 @@ class GUI():
                             title = "Select a File",
                             filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
 
-        #self.uploadFile(filename)
+        self.uploadFile(filename)
 
-    #def uploadFile(self, filename):
-    #    img = ImageTk.PhotoImage(Image.open(filename))
-    #    photo = PhotoImage(file = r'/home/humberto/Humberto_dados/WhatsApp Image 2021-10-29 at 12.59.12.jpeg')
-    #    self.canva.create_image(20, 20, anchor = NW, image = photo)
-    #    self.txt_area.insert(END, photo)
+    def uploadFile(self, filename):
+        img = Image.open(filename)
+        photo = ImageTk.PhotoImage(img)
+        self.canva.create_image(20, 20, anchor = NW, image = photo)
+        self.txt_area.insert(END, photo)
 
 
 
