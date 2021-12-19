@@ -38,13 +38,6 @@ class GUI():
         self.window.columnconfigure(0, weight=4)
         self.window.columnconfigure(1, weight=1)
 
-        #self.label_file_explorer = Label(self.canva,   text = "File Explorer using Tkinter", width = 100, height = 4,    fg = "blue")
-        #button_explore = Button(self.canva, text = "Browse Files", command = self.browseFiles)
-        #button_exit = Button(self.canva, text = "Exit", command = exit)
-        #self.label_file_explorer.grid()
-        #button_explore.grid()
-        #button_exit.grid()
-
 
     def send(self, event=None):
         texto = '[' + strftime("%H:%M", gmtime()) + ']:' + " " + self.txt_field.get() + '\n'
@@ -65,11 +58,20 @@ class GUI():
 
     def uploadFile(self, filename):
         img = Image.open(filename)
+        img = img.resize((100, 100))
         self.photo = ImageTk.PhotoImage(img)
-        self.canva.create_image(20, 20, anchor = NW, image = self.photo)
-        self.txt_area.insert(END, self.photo)
-
-
+        Label(self.txt_area,
+              text='[' + strftime('%H:%M', gmtime()) + ']:',
+              bg=self.BACKGROUND_COLOR,
+              justify=LEFT,
+              anchor='w'
+        ).pack(fill=X)
+        Label(self.txt_area,
+              image=self.photo,
+              bg=self.BACKGROUND_COLOR,
+              justify=LEFT,
+              anchor='w'
+          ).pack(fill=X)
 
     def start(self):
         self.window.mainloop()
