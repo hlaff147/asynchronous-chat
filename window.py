@@ -97,6 +97,9 @@ class GUI():
 
 
     def chat_send(self, event=None):
+        texto = self.txt_field.get()
+        if texto.isspace() or texto == '':
+            return
         texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
         self._socket.send('TEXTX'.encode())
         self._socket.send(texto.encode())
