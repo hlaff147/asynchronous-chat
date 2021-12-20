@@ -28,34 +28,51 @@ class GUI():
             self.s.bind(('localhost', 50000))
             self.s.listen(1)
             self.conn, addr = self.s.accept()
-            self.send = self.conn.sendall
-            self.recv = self.conn.recv
+            self._socket = self.conn
         except:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.connect(('localhost', 50000))
-            self.send = self.s.sendall
-            self.recv = self.s.recv
+            self._socket = self.s
         finally:
             Thread(target=self.chat_recv, daemon=True).start()
 
     def chat_recv(self):
         while True:
-            msg_type = self.recv(5)
+            msg_type = self._socket.recv(5)
             msg_type = msg_type.decode('utf-8')
 
             if msg_type == 'TEXTX':
-                msg = self.recv(1024)
+                msg = self._socket.recv(1024)
                 msg = msg.decode('utf-8')
                 self.txt_area.display_text(msg)
 
+
             elif msg_type == 'IMAGE':
-                print('Receiving image message')
+                with open('income.jpg', 'wb') as f:
+                    while True:
+                        data = self._socket.recv(512)
+                        f.write(data)
+                        if len(data) < 512:
+                            break
+                self.txt_area.display_image('income.jpg')
 
             elif msg_type == 'AUDIO':
-                print('Receiving audio message')
+                with open('income.wav', 'wb') as f:
+                    while True:
+                        data = self._socket.recv(512)
+                        f.write(data)
+                        if len(data) < 512:
+                            break
+                self.txt_area.display_audio('income.wav')
 
             elif msg_type == 'VIDEO':
-                print('Receiving video message')
+                with open('income.mp4', 'wb') as f:
+                    while True:
+                        data = self._socket.recv(512)
+                        f.write(data)
+                        if len(data) < 512:
+                            break
+                self.txt_area.display_video('income.mp4')
 
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
@@ -79,8 +96,8 @@ class GUI():
 
     def chat_send(self, event=None):
         texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
-        self.send('TEXTX'.encode())
-        self.send(texto.encode())
+        self._socket.send('TEXTX'.encode())
+        self._socket.send(texto.encode())
         self.txt_area.display_text(texto)
         self.txt_field.delete(0, END)
 
@@ -100,10 +117,21 @@ class GUI():
 
         if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_video(filename)
+            self._socket.send('VIDEO'.encode())
         elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_audio(filename)
+            self._socket.send('AUDIO'.encode())
         else:
             self.txt_area.display_image(filename)
+            self._socket.send('IMAGE'.encode())
+
+        with open(filename, 'rb') as f:
+            while True:
+                l = f.read(512)
+                if not l:
+                    break
+                self._socket.send(l)
+
 
     def start(self):
         self.window.mainloop()
