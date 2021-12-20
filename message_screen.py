@@ -1,6 +1,8 @@
 from tkinter import *
 from PIL import *
 from PIL import Image, ImageTk
+import imageio
+from threading import Thread
 
 
 class MessageScreen(Frame):
@@ -27,4 +29,22 @@ class MessageScreen(Frame):
               anchor='w'
           ).pack(fill=X)
 
+    def stream(self):
+        for image in self.video.iter_data():
+            frame_image = Image.fromarray(image)
+            frame_image = frame_image.resize((100, 100))
+            frame_image = ImageTk.PhotoImage(frame_image)
+            self.l.config(image=frame_image)
+            self.l.image = frame_image
+
+    def display_video(self, filename):
+        self.video = imageio.get_reader(filename)
+        delay = int(1000 / self.video.get_meta_data()['fps'])
+        self.l = Label(self,
+              bg=self.bg,
+              justify=LEFT,
+              anchor='w'
+        )
+        self.l.pack(fill=X)
+        Thread(target=self.stream, daemon=True).start()
 
