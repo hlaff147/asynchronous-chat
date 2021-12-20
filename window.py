@@ -3,8 +3,11 @@ from time import gmtime, strftime
 from tkinter import filedialog
 from PIL import *
 import os
-from message_screen import MessageScreen
 import re
+import socket
+from threading import Thread
+
+from message_screen import MessageScreen
 
 
 class GUI():
@@ -19,15 +22,48 @@ class GUI():
         self.label_file_explorer = None
         self.createWidgets()
 
+        try:
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.s.bind(('localhost', 28886))
+            self.s.listen(1)
+            self.conn, addr = self.s.accept()
+            self.send = self.conn.sendall
+            self.recv = self.conn.recv
+        except:
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.s.bind(('0.0.0.0', 28887))
+            self.s.connect(('localhost', 28886))
+            self.send = self.s.sendall
+            self.recv = self.s.recv
+        finally:
+            Thread(target=self.chat_recv, daemon=True).start()
+
+    def chat_recv(self):
+        while True:
+            msg_type = self.recv(1024)
+            msg_type = msg_type.decode('utf-8')
+
+            if msg_type == 'TEXT':
+                print('Receiving text message')
+
+            elif msg_type == 'IMAGE':
+                print('Receiving image message')
+
+            elif msg_type == 'AUDIO':
+                print('Receiving audio message')
+
+            elif msg_type == 'VIDEO':
+                print('Receiving video message')
+
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
 
         self.txt_field = Entry(self.window, bg='white')
-        self.send_button = Button(self.window, text='Enviar',  command=self.send)
+        self.send_button = Button(self.window, text='Enviar',  command=self.chat_send)
         self.file_button = Button(self.window, text='Arquivo', command=self.browseFiles)
         self.clear_button = Button(self.window, text='Limpar', command=self.clear)
 
-        self.window.bind('<Return>', self.send)
+        self.window.bind('<Return>', self.chat_send)
 
         self.txt_area.grid(row=0, column=0, columnspan=5)
         self.txt_field.grid(row=1, column=0, columnspan=2, stick='ew', padx=(5, 0))
@@ -39,8 +75,9 @@ class GUI():
         self.window.columnconfigure(1, weight=1)
 
 
-    def send(self, event=None):
+    def chat_send(self, event=None):
         texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
+        self.send('TEXT'.encode())
         self.txt_area.display_text(texto)
         self.txt_field.delete(0, END)
 
