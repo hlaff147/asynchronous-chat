@@ -5,7 +5,7 @@ import imageio
 from threading import Thread
 from playsound import playsound
 
-from tmp import VerticalScrolledFrame
+from vertical_scrolled_frame import VerticalScrolledFrame
 
 
 class MessageScreen(Frame):
