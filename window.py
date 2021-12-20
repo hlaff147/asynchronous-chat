@@ -4,11 +4,13 @@ from tkinter import filedialog
 from PIL import *
 import os
 from message_screen import MessageScreen
+import re
 
 
 class GUI():
 
     BACKGROUND_COLOR = '#c8a2c8'
+    SUPPORTED_VIDEO_FORMATS = ['mp4']
 
     def __init__(self):
         self.window = Tk()
@@ -54,7 +56,11 @@ class GUI():
 
     def uploadFile(self, filename):
         self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
-        self.txt_area.display_image(filename)
+
+        if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
+            self.txt_area.display_video(filename)
+        else:
+            self.txt_area.display_image(filename)
 
     def start(self):
         self.window.mainloop()
