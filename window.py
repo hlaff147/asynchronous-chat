@@ -45,9 +45,11 @@ class GUI():
                 msg = self._socket.recv(1024)
                 msg = msg.decode('utf-8')
                 self.txt_area.display_text(msg)
+                return
 
+            self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
 
-            elif msg_type == 'IMAGE':
+            if msg_type == 'IMAGE':
                 with open('income.jpg', 'wb') as f:
                     while True:
                         data = self._socket.recv(512)
