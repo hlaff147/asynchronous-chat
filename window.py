@@ -6,6 +6,7 @@ import os
 import re
 import socket
 from threading import Thread
+from random import randint
 
 from message_screen import MessageScreen
 
@@ -24,15 +25,14 @@ class GUI():
 
         try:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.bind(('localhost', 28886))
+            self.s.bind(('localhost', 50000))
             self.s.listen(1)
             self.conn, addr = self.s.accept()
             self.send = self.conn.sendall
             self.recv = self.conn.recv
         except:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.bind(('0.0.0.0', 28887))
-            self.s.connect(('localhost', 28886))
+            self.s.connect(('localhost', 50000))
             self.send = self.s.sendall
             self.recv = self.s.recv
         finally:
@@ -40,11 +40,13 @@ class GUI():
 
     def chat_recv(self):
         while True:
-            msg_type = self.recv(1024)
+            msg_type = self.recv(5)
             msg_type = msg_type.decode('utf-8')
 
-            if msg_type == 'TEXT':
-                print('Receiving text message')
+            if msg_type == 'TEXTX':
+                msg = self.recv(1024)
+                msg = msg.decode('utf-8')
+                self.txt_area.display_text(msg)
 
             elif msg_type == 'IMAGE':
                 print('Receiving image message')
@@ -77,7 +79,8 @@ class GUI():
 
     def chat_send(self, event=None):
         texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
-        self.send('TEXT'.encode())
+        self.send('TEXTX'.encode())
+        self.send(texto.encode())
         self.txt_area.display_text(texto)
         self.txt_field.delete(0, END)
 
