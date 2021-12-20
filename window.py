@@ -11,6 +11,7 @@ class GUI():
 
     BACKGROUND_COLOR = '#c8a2c8'
     SUPPORTED_VIDEO_FORMATS = ['mp4']
+    SUPPORTED_AUDIO_FORMATS = ['wav', 'mp3']
 
     def __init__(self):
         self.window = Tk()
@@ -59,6 +60,8 @@ class GUI():
 
         if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_video(filename)
+        if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
+            self.txt_area.display_audio(filename)
         else:
             self.txt_area.display_image(filename)
 
