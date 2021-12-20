@@ -3,6 +3,7 @@ from PIL import *
 from PIL import Image, ImageTk
 import imageio
 from threading import Thread
+from playsound import playsound
 
 
 class MessageScreen(Frame):
@@ -47,4 +48,16 @@ class MessageScreen(Frame):
         )
         self.l.pack(fill=X)
         Thread(target=self.stream, daemon=True).start()
+
+    def display_audio(self, filename):
+        play_label = Label(self,
+                           bg=self.bg,
+                           justify=LEFT,
+                           anchor='w'
+        )
+        play_label.pack(fill=X)
+        Button(play_label,
+               text='Play',
+               command=lambda: playsound(filename)
+        ).pack()
 
