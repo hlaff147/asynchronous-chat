@@ -60,7 +60,7 @@ class GUI():
 
         if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_video(filename)
-        if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
+        elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_audio(filename)
         else:
             self.txt_area.display_image(filename)
