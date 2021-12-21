@@ -81,22 +81,27 @@ class GUI():
 
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
+        self.txt_area.grid(row=0, column=0, columnspan=5, sticky='nswe')
+        self.txt_area.columnconfigure(0,weight=1)
+        self.txt_area.rowconfigure(0, weight=1)
 
         self.txt_field = Entry(self.window, bg='white')
+        self.txt_field.grid(row=1, column=0, sticky='nswe', padx=5, pady=5)
+        self.txt_field.columnconfigure(0, weight=2)
         self.send_button = Button(self.window, text='Enviar', command=self.chat_send)
+        self.send_button.grid(row=1, column=1, pady=5)
+        self.send_button.columnconfigure(0, weight=1)
         self.file_button = Button(self.window, text='Arquivo', command=self.browseFiles)
+        self.file_button.grid(row=1, column=2, pady=5)
+        self.file_button.columnconfigure(0, weight=1)
         self.clear_button = Button(self.window, text='Limpar', command=self.clear)
+        self.clear_button.grid(row=1, column=3, padx=(0,5), pady=5)
+        self.clear_button.columnconfigure(0, weight=1)
 
         self.window.bind('<Return>', self.chat_send)
 
-        self.txt_area.grid(row=0, column=0, columnspan=5)
-        self.txt_field.grid(row=1, column=0, columnspan=2, stick='ew', padx=(5, 0))
-        self.send_button.grid(row=1, column=2, padx=0, pady=7)
-        self.file_button.grid(row=1, column=3, padx=0)
-        self.clear_button.grid(row=1, column=4, padx=0)
-
-        self.window.columnconfigure(0, weight=4)
-        self.window.columnconfigure(1, weight=1)
+        self.window.columnconfigure(0, weight=1)
+        self.window.rowconfigure(0, weight=1)
 
     def chat_send(self, event=None):
         texto = self.txt_field.get()
