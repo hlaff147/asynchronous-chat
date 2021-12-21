@@ -25,6 +25,10 @@ class GUI():
         self.label_file_explorer = None
         self.createWidgets()
 
+        self.video_regex = re.compile(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')')
+        self.audio_regex = re.compile(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')')
+        self.image_regex = re.compile(r'.*\.(' + '|'.join(self.SUPPORTED_IMAGE_FORMATS) + ')')
+
         try:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.bind(('localhost', 50000))
@@ -125,17 +129,18 @@ class GUI():
         self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
         extension = re.match(r'.*\.(.+)', filename).group(1)
 
-        if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
+        if self.video_regex.match(filename) is not None:
             self.txt_area.display_video(filename)
             self._socket.send('VIDEO'.encode())
 
-        elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
+        elif self.audio_regex.match(filename) is not None:
             self.txt_area.display_audio(filename)
             self._socket.send('AUDIO'.encode())
 
-        elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_IMAGE_FORMATS) + ')', filename) is not None:
+        elif self.image_regex.match(filename) is not None:
             self.txt_area.display_image(filename)
             self._socket.send('IMAGE'.encode())
+
         else:
             self.txt_area.display_text('Transferiu arquivo ' + extension)
             self._socket.send('FILEX'.encode())
