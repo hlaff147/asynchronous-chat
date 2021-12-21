@@ -58,7 +58,7 @@ class GUI():
                 self.txt_area.display_text(msg)
                 continue
 
-            self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
+            self.txt_area.display_text('[' + strftime('%x %X') + ']:')
 
             extension = self._socket.recv(10).decode('utf-8')
             extension = re.match(r'([^-]+).*', extension).group(1)
@@ -106,7 +106,7 @@ class GUI():
         if texto.isspace() or texto == '':
             return
 
-        texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
+        texto = '[' + strftime('%x %X') + ']:' + ' ' + self.txt_field.get() + '\n'
 
         self._socket.send('TEXTX'.encode())
         self._socket.send(texto.encode())
@@ -117,14 +117,14 @@ class GUI():
         self.txt_area.clear()
 
     def browseFiles(self):
-        filename = filedialog.askopenfilename(initialdir = "/",
-                            title = "Select a File",
-                            filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+        filename = filedialog.askopenfilename(initialdir = '/',
+                            title = 'Select a File',
+                            filetypes = (('Text files', '*.txt*'), ('all files', '*.*')))
 
         self.uploadFile(filename)
 
     def uploadFile(self, filename):
-        self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
+        self.txt_area.display_text('[' + strftime('%x %X') + ']:')
         extension = re.match(r'.*\.(.+)', filename).group(1)
 
         if self.video_regex.match(filename) is not None:
