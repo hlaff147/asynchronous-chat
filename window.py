@@ -16,6 +16,7 @@ class GUI():
     BACKGROUND_COLOR = '#c8a2c8'
     SUPPORTED_VIDEO_FORMATS = ['mp4']
     SUPPORTED_AUDIO_FORMATS = ['wav', 'mp3']
+    RECEIVED_FILE_COUNTER   = 0
 
     def __init__(self):
         self.window = Tk()
@@ -36,6 +37,10 @@ class GUI():
         finally:
             Thread(target=self.chat_recv, daemon=True).start()
 
+    def get_infilename(self, extension):
+        self.RECEIVED_FILE_COUNTER += 1
+        return f'TRANSFER_FILE{self.RECEIVED_FILE_COUNTER}.{extension}'
+
     def chat_recv(self):
         while True:
             msg_type = self._socket.recv(5)
@@ -50,31 +55,34 @@ class GUI():
             self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
 
             if msg_type == 'IMAGE':
-                with open('income.jpg', 'wb') as f:
+                filename = self.get_infilename('jpg')
+                with open(filename, 'wb') as f:
                     while True:
                         data = self._socket.recv(512)
                         f.write(data)
                         if len(data) < 512:
                             break
-                self.txt_area.display_image('income.jpg')
+                self.txt_area.display_image(filename)
 
             elif msg_type == 'AUDIO':
-                with open('income.wav', 'wb') as f:
+                filename = self.get_infilename('wav')
+                with open(filename, 'wb') as f:
                     while True:
                         data = self._socket.recv(512)
                         f.write(data)
                         if len(data) < 512:
                             break
-                self.txt_area.display_audio('income.wav')
+                self.txt_area.display_audio(filename)
 
             elif msg_type == 'VIDEO':
-                with open('income.mp4', 'wb') as f:
+                filename = self.get_infilename('mp4')
+                with open(filename, 'wb') as f:
                     while True:
                         data = self._socket.recv(512)
                         f.write(data)
                         if len(data) < 512:
                             break
-                self.txt_area.display_video('income.mp4')
+                self.txt_area.display_video(filename)
 
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)

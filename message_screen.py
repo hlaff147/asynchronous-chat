@@ -16,6 +16,7 @@ class MessageScreen(Frame):
 
         self.frame = VerticalScrolledFrame(self, bg=self.bg)
         self.frame.pack(fill=BOTH)
+        self.photos = []
 
     @property
     def viewport(self):
@@ -32,9 +33,9 @@ class MessageScreen(Frame):
     def display_image(self, filename):
         img = Image.open(filename)
         img = img.resize((100, 100))
-        self.photo = ImageTk.PhotoImage(img)
+        self.photos.append(ImageTk.PhotoImage(img))
         Label(self.viewport,
-              image=self.photo,
+              image=self.photos[-1],
               bg=self.bg,
               justify=LEFT,
               anchor='w'
