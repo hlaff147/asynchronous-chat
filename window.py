@@ -1,12 +1,10 @@
 from tkinter import *
-from time import gmtime, strftime
+from time import strftime
 from tkinter import filedialog
 from PIL import *
-import os
 import re
 import socket
 from threading import Thread
-from random import randint
 
 from message_screen import MessageScreen
 
