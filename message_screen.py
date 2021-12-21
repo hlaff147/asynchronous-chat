@@ -3,9 +3,17 @@ from PIL import *
 from PIL import Image, ImageTk
 import imageio
 from threading import Thread
-from playsound import playsound
-
+import platform
 from vertical_scrolled_frame import VerticalScrolledFrame
+
+if platform.system() == 'Windows':
+    import winsound
+    def play_sound(filename):
+        winsound.PlaySound(filename, winsound.SND_FILENAME)
+else:
+    from playsound import playsound
+    def play_sound(filename):
+        playsound(filename, False)
 
 
 class MessageScreen(Frame):
@@ -69,6 +77,6 @@ class MessageScreen(Frame):
         play_label.pack(fill=X)
         Button(play_label,
                text='Play',
-               command=lambda: playsound(filename)
+               command=lambda: play_sound(filename)
         ).pack()
 
