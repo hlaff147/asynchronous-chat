@@ -45,7 +45,7 @@ class GUI():
                 msg = self._socket.recv(1024)
                 msg = msg.decode('utf-8')
                 self.txt_area.display_text(msg)
-                return
+                continue
 
             self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
 
@@ -98,14 +98,16 @@ class GUI():
 
     def chat_send(self, event=None):
         texto = self.txt_field.get()
+
         if texto.isspace() or texto == '':
             return
+
         texto = '[' + strftime("%H:%M") + ']:' + " " + self.txt_field.get() + '\n'
+
         self._socket.send('TEXTX'.encode())
         self._socket.send(texto.encode())
         self.txt_area.display_text(texto)
         self.txt_field.delete(0, END)
-
 
     def clear(self, event=None):
         self.txt_area.clear()
