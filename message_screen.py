@@ -40,7 +40,7 @@ class MessageScreen(Frame):
 
     def display_image(self, filename):
         img = Image.open(filename)
-        img = img.resize((100, 100))
+        img.thumbnail((300,300))
         self.photos.append(ImageTk.PhotoImage(img))
         Label(self.viewport,
               image=self.photos[-1],
@@ -52,7 +52,7 @@ class MessageScreen(Frame):
     def stream(self, video, label):
         for image in video.iter_data():
             frame_image = Image.fromarray(image)
-            frame_image = frame_image.resize((100, 100))
+            frame_image = frame_image.resize((352,240))
             frame_image = ImageTk.PhotoImage(frame_image)
             label.config(image=frame_image)
             label.image = frame_image
