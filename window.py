@@ -16,6 +16,7 @@ class GUI():
     BACKGROUND_COLOR = '#c8a2c8'
     SUPPORTED_VIDEO_FORMATS = ['mp4']
     SUPPORTED_AUDIO_FORMATS = ['wav', 'mp3']
+    SUPPORTED_IMAGE_FORMATS = ['jpg']
     RECEIVED_FILE_COUNTER   = 0
 
     def __init__(self):
@@ -136,12 +137,16 @@ class GUI():
         if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_video(filename)
             self._socket.send('VIDEO'.encode())
+
         elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_AUDIO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_audio(filename)
             self._socket.send('AUDIO'.encode())
-        else:
+
+        elif re.match(r'.*\.(' + '|'.join(self.SUPPORTED_IMAGE_FORMATS) + ')', filename) is not None:
             self.txt_area.display_image(filename)
             self._socket.send('IMAGE'.encode())
+        else:
+            self._socket.send('FILEX'.encode())
 
         with open(filename, 'rb') as f:
             while True:
@@ -153,6 +158,7 @@ class GUI():
 
     def start(self):
         self.window.mainloop()
+        self._socket.close()
 
 
 interface = GUI().start()
