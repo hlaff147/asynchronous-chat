@@ -69,6 +69,6 @@ class MessageScreen(Frame):
         play_label.pack(fill=X)
         Button(play_label,
                text='Play',
-               command=lambda: playsound(filename, False)
+               command=lambda: playsound(filename)
         ).pack()
 
