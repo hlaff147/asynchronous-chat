@@ -58,35 +58,25 @@ class GUI():
 
             self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
 
+            extension = self._socket.recv(10).decode('utf-8')
+            extension = re.match(r'([^-]+).*', extension).group(1)
+            filename = self.get_infilename(extension)
+
+            with open(filename, 'wb') as f:
+                while True:
+                    data = self._socket.recv(512)
+                    f.write(data)
+                    if len(data) < 512:
+                        break
+
             if msg_type == 'IMAGE':
-                filename = self.get_infilename('jpg')
-                with open(filename, 'wb') as f:
-                    while True:
-                        data = self._socket.recv(512)
-                        f.write(data)
-                        if len(data) < 512:
-                            break
                 self.txt_area.display_image(filename)
-
             elif msg_type == 'AUDIO':
-                filename = self.get_infilename('wav')
-                with open(filename, 'wb') as f:
-                    while True:
-                        data = self._socket.recv(512)
-                        f.write(data)
-                        if len(data) < 512:
-                            break
                 self.txt_area.display_audio(filename)
-
             elif msg_type == 'VIDEO':
-                filename = self.get_infilename('mp4')
-                with open(filename, 'wb') as f:
-                    while True:
-                        data = self._socket.recv(512)
-                        f.write(data)
-                        if len(data) < 512:
-                            break
                 self.txt_area.display_video(filename)
+            else:
+                self.txt_area.display_text('Transferiu arquivo ' + extension)
 
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
@@ -133,6 +123,7 @@ class GUI():
 
     def uploadFile(self, filename):
         self.txt_area.display_text('[' + strftime('%H:%M') + ']:')
+        extension = re.match(r'.*\.(.+)', filename).group(1)
 
         if re.match(r'.*\.(' + '|'.join(self.SUPPORTED_VIDEO_FORMATS) + ')', filename) is not None:
             self.txt_area.display_video(filename)
@@ -146,7 +137,11 @@ class GUI():
             self.txt_area.display_image(filename)
             self._socket.send('IMAGE'.encode())
         else:
+            self.txt_area.display_text('Transferiu arquivo ' + extension)
             self._socket.send('FILEX'.encode())
+
+        extension_code = extension + '-' * (10 - len(extension))
+        self._socket.send(extension_code.encode())
 
         with open(filename, 'rb') as f:
             while True:
