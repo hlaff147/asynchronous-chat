@@ -46,6 +46,9 @@ class GUI():
             msg_type = self._socket.recv(5)
             msg_type = msg_type.decode('utf-8')
 
+            if msg_type == '':
+                break
+
             if msg_type == 'TEXTX':
                 msg = self._socket.recv(1024)
                 msg = msg.decode('utf-8')
