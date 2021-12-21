@@ -10,12 +10,11 @@ from message_screen import MessageScreen
 
 
 class GUI():
-
     BACKGROUND_COLOR = '#c8a2c8'
     SUPPORTED_VIDEO_FORMATS = ['mp4']
     SUPPORTED_AUDIO_FORMATS = ['wav', 'mp3']
-    SUPPORTED_IMAGE_FORMATS = ['jpg']
-    RECEIVED_FILE_COUNTER   = 0
+    SUPPORTED_IMAGE_FORMATS = ['jpg', 'png']
+    RECEIVED_FILE_COUNTER = 0
 
     def __init__(self):
         self.window = Tk()
@@ -58,7 +57,7 @@ class GUI():
                 self.txt_area.display_text(msg)
                 continue
 
-            self.txt_area.display_text('[' + strftime('%x %X') + ']:')
+            self.txt_area.display_text(strftime('[%x %X]:'))
 
             extension = self._socket.recv(10).decode('utf-8')
             extension = re.match(r'([^-]+).*', extension).group(1)
@@ -82,23 +81,27 @@ class GUI():
 
     def createWidgets(self):
         self.txt_area = MessageScreen(self.window, border=1, bg=self.BACKGROUND_COLOR, width=700, height=300)
+        self.txt_area.grid(row=0, column=0, columnspan=5, sticky='nswe')
+        self.txt_area.columnconfigure(0,weight=1)
+        self.txt_area.rowconfigure(0, weight=1)
 
         self.txt_field = Entry(self.window, bg='white')
-        self.send_button = Button(self.window, text='Enviar',  command=self.chat_send)
+        self.txt_field.grid(row=1, column=0, sticky='nswe', padx=5, pady=5)
+        self.txt_field.columnconfigure(0, weight=2)
+        self.send_button = Button(self.window, text='Enviar', command=self.chat_send)
+        self.send_button.grid(row=1, column=1, pady=5)
+        self.send_button.columnconfigure(0, weight=1)
         self.file_button = Button(self.window, text='Arquivo', command=self.browseFiles)
+        self.file_button.grid(row=1, column=2, pady=5)
+        self.file_button.columnconfigure(0, weight=1)
         self.clear_button = Button(self.window, text='Limpar', command=self.clear)
+        self.clear_button.grid(row=1, column=3, padx=(0,5), pady=5)
+        self.clear_button.columnconfigure(0, weight=1)
 
         self.window.bind('<Return>', self.chat_send)
 
-        self.txt_area.grid(row=0, column=0, columnspan=5)
-        self.txt_field.grid(row=1, column=0, columnspan=2, stick='ew', padx=(5, 0))
-        self.send_button.grid( row=1, column=2, padx=0, pady=7)
-        self.file_button.grid( row=1, column=3, padx=0)
-        self.clear_button.grid(row=1, column=4, padx=0)
-
-        self.window.columnconfigure(0, weight=4)
-        self.window.columnconfigure(1, weight=1)
-
+        self.window.columnconfigure(0, weight=1)
+        self.window.rowconfigure(0, weight=1)
 
     def chat_send(self, event=None):
         texto = self.txt_field.get()
@@ -106,7 +109,7 @@ class GUI():
         if texto.isspace() or texto == '':
             return
 
-        texto = '[' + strftime('%x %X') + ']:' + ' ' + self.txt_field.get() + '\n'
+        texto = strftime('[%x %X]:') + " " + self.txt_field.get()
 
         self._socket.send('TEXTX'.encode())
         self._socket.send(texto.encode())
@@ -117,14 +120,12 @@ class GUI():
         self.txt_area.clear()
 
     def browseFiles(self):
-        filename = filedialog.askopenfilename(initialdir = '/',
-                            title = 'Select a File',
-                            filetypes = (('Text files', '*.txt*'), ('all files', '*.*')))
-
-        self.uploadFile(filename)
+        filename = filedialog.askopenfilename(title="Select a File")
+        if filename:
+            self.uploadFile(filename)
 
     def uploadFile(self, filename):
-        self.txt_area.display_text('[' + strftime('%x %X') + ']:')
+        self.txt_area.display_text(strftime('[%x %X]:'))
         extension = re.match(r'.*\.(.+)', filename).group(1)
 
         if self.video_regex.match(filename) is not None:
@@ -152,7 +153,6 @@ class GUI():
                 if not l:
                     break
                 self._socket.send(l)
-
 
     def start(self):
         self.window.mainloop()
